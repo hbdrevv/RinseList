@@ -222,11 +222,9 @@ export function FileUpload({
         </p>
       )}
 
-      {isSameFile && (
+      {isSameFile && label === "Suppression List" && (
         <p className="mt-2 text-sm" style={{ color: "var(--warning)" }}>
-          This looks like the same file as your{" "}
-          {label === "Contact List" ? "Suppression List" : "Contact List"}.
-          Please upload your Klaviyo suppression list here.
+          The Contact List and Suppression List must be different files.
         </p>
       )}
     </div>

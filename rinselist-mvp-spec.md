@@ -252,4 +252,29 @@ V2 may introduce a serverless function to handle processing of larger files wher
 
 ---
 
+## Developer Notes & Tooling
+
+This is a portfolio piece — code quality and configuration are part of the story. Do not relax defaults in the interest of expediency.
+
+### TypeScript
+- `strict: true` in `tsconfig.json` — no exceptions
+- No use of `any` without explicit justification in a comment
+
+### ESLint
+- Use `eslint-config-next` with `next/core-web-vitals` ruleset
+- No disabled rules without a comment explaining why
+
+### Prettier
+- Add Prettier for consistent formatting
+- Default config is fine — consistency matters more than specific preferences here
+
+### Tailwind
+- All color, spacing, and typography values go through the Tailwind theme config — no hardcoded values in components
+- Theme config is the source of truth and must stay in sync with design token decisions
+- If a value isn't in the theme, add it to the theme — don't inline it
+
+### Web Workers
+- File processing (CSV parsing, matching logic, validation) must run in a Web Worker
+- The main thread is reserved for UI — processing should never block animation or interaction
+
 *This spec is intentionally scoped to ship. Complexity lives in V2.*

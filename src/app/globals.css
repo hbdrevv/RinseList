@@ -157,6 +157,14 @@
  * =============================================================================
  */
 
+/**
+ * Force light mode until dark mode tokens are ready
+ * TODO: Remove this when dark mode color tokens are implemented
+ */
+:root {
+  color-scheme: light;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

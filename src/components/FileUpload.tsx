@@ -1,49 +1,179 @@
 "use client";
 
+/**
+ * =============================================================================
+ * FILE UPLOAD COMPONENT
+ * =============================================================================
+ *
+ * Drag-and-drop file upload zone for CSV/XLSX files.
+ *
+ * STATES (based on Figma v1 flow):
+ * - Empty: Blue dashed border, blue background, upload prompt
+ * - Success: Green solid border, green background, filename display
+ * - Disabled: Reduced opacity, no interactions
+ *
+ * USAGE:
+ * <FileUpload
+ *   type="contact" | "suppression"
+ *   file={uploadedFile}
+ *   onFileSelect={(file) => setFile(file)}
+ *   disabled={false}
+ * />
+ *
+ * =============================================================================
+ */
+
 import { useCallback, useRef, useState } from "react";
 
+/* -----------------------------------------------------------------------------
+ * TYPE DEFINITIONS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Uploaded file with metadata
+ */
 interface UploadedFile {
   file: File;
   name: string;
 }
 
+/**
+ * Upload type determines the prompt copy
+ * - contact: "Drag your new contact list here..."
+ * - suppression: "Drag your suppression list here..."
+ */
+type UploadType = "contact" | "suppression";
+
 interface FileUploadProps {
-  label: string;
-  description: string;
+  /** Type of file being uploaded - affects prompt copy */
+  type: UploadType;
+  /** Currently uploaded file (null if empty) */
   file: UploadedFile | null;
+  /** Callback when file is selected or cleared */
   onFileSelect: (file: UploadedFile | null) => void;
+  /** Whether the upload zone is disabled */
   disabled?: boolean;
-  otherFile?: UploadedFile | null;
 }
 
+/* -----------------------------------------------------------------------------
+ * CONSTANTS
+ * -------------------------------------------------------------------------- */
+
+/** Accepted MIME types for file input */
 const ACCEPTED_TYPES = [
   "text/csv",
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ];
 
+/** Accepted file extensions */
 const ACCEPTED_EXTENSIONS = [".csv", ".xlsx", ".xls"];
 
+/** Helper text shown below upload zone */
+const HELPER_TEXT =
+  "Accepts CSV or XSLX files. Excel docs default to the first sheet in the document.";
+
+/** Prompt copy based on upload type */
+const PROMPTS: Record<UploadType, { prefix: string; emphasis: string }> = {
+  contact: {
+    prefix: "Drag your new ",
+    emphasis: "contact list",
+  },
+  suppression: {
+    prefix: "Drag your ",
+    emphasis: "suppression list",
+  },
+};
+
+/* -----------------------------------------------------------------------------
+ * HELPER FUNCTIONS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Validates file type by MIME type or extension
+ */
 function isValidFile(file: File): boolean {
   const extension = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
-  return ACCEPTED_TYPES.includes(file.type) || ACCEPTED_EXTENSIONS.includes(extension);
+  return (
+    ACCEPTED_TYPES.includes(file.type) || ACCEPTED_EXTENSIONS.includes(extension)
+  );
 }
 
+/* -----------------------------------------------------------------------------
+ * ICON COMPONENTS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * File upload icon (shown in empty state)
+ * Matches Figma: file-upload icon
+ */
+function FileUploadIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="12" y1="18" x2="12" y2="12" />
+      <line x1="9" y1="15" x2="12" y2="12" />
+      <line x1="15" y1="15" x2="12" y2="12" />
+    </svg>
+  );
+}
+
+/**
+ * Check circle icon (shown in success state)
+ * Matches Figma: check-circle icon
+ */
+function CheckCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  );
+}
+
+/* -----------------------------------------------------------------------------
+ * MAIN COMPONENT
+ * -------------------------------------------------------------------------- */
+
 export function FileUpload({
-  label,
-  description,
+  type,
   file,
   onFileSelect,
   disabled = false,
-  otherFile,
 }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isSameFile =
-    file && otherFile && file.name === otherFile.name && file.file.size === otherFile.file.size;
+  /* ---------------------------------------------------------------------------
+   * EVENT HANDLERS
+   * ------------------------------------------------------------------------- */
 
+  /**
+   * Process a selected file
+   * Validates file type and updates state
+   */
   const handleFile = useCallback(
     (selectedFile: File) => {
       if (!isValidFile(selectedFile)) {
@@ -60,6 +190,9 @@ export function FileUpload({
     [onFileSelect]
   );
 
+  /**
+   * Handle file drop
+   */
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -75,6 +208,9 @@ export function FileUpload({
     [disabled, handleFile]
   );
 
+  /**
+   * Handle drag over (enables drop)
+   */
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -85,17 +221,26 @@ export function FileUpload({
     [disabled]
   );
 
+  /**
+   * Handle drag leave
+   */
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
   }, []);
 
+  /**
+   * Handle click to open file picker
+   */
   const handleClick = useCallback(() => {
     if (!disabled) {
       inputRef.current?.click();
     }
   }, [disabled]);
 
+  /**
+   * Handle file input change
+   */
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFile = e.target.files?.[0];
@@ -106,47 +251,65 @@ export function FileUpload({
     [handleFile]
   );
 
-  const handleRemove = useCallback(
+  /**
+   * Handle "Replace File" click
+   * Opens file picker to select new file
+   */
+  const handleReplace = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onFileSelect(null);
-      setError(null);
-      if (inputRef.current) {
-        inputRef.current.value = "";
+      if (!disabled) {
+        // Reset input to allow selecting same file again
+        if (inputRef.current) {
+          inputRef.current.value = "";
+        }
+        inputRef.current?.click();
       }
     },
-    [onFileSelect]
+    [disabled]
   );
+
+  /* ---------------------------------------------------------------------------
+   * COMPUTED VALUES
+   * ------------------------------------------------------------------------- */
+
+  const hasFile = !!file;
+  const prompt = PROMPTS[type];
+
+  /* ---------------------------------------------------------------------------
+   * RENDER
+   * ------------------------------------------------------------------------- */
 
   return (
     <div>
-      <label
-        className="mb-2 block text-sm font-medium"
-        style={{ color: "var(--foreground)" }}
-      >
-        {label}
-      </label>
-      <p className="mb-2 text-sm" style={{ color: "var(--muted)" }}>
-        {description}
-      </p>
-
+      {/* Upload zone */}
       <div
         onClick={handleClick}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        className={`relative flex min-h-[120px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 transition-colors ${
-          disabled ? "cursor-not-allowed opacity-50" : ""
-        }`}
+        className={`
+          relative flex h-[89px] cursor-pointer items-center
+          border px-6 transition-all
+          ${disabled ? "cursor-not-allowed" : ""}
+          ${hasFile ? "border-solid" : "border-dashed"}
+        `}
         style={{
-          borderColor: isDragging
-            ? "var(--primary)"
-            : error
-              ? "var(--destructive)"
-              : "var(--border)",
-          backgroundColor: isDragging ? "var(--surface)" : "transparent",
+          // Background color based on state
+          backgroundColor: hasFile
+            ? "var(--upload-success-bg)"
+            : isDragging
+              ? "var(--blue-100)"
+              : "var(--upload-bg)",
+          // Border color based on state
+          borderColor: hasFile
+            ? "var(--upload-success-border)"
+            : "var(--upload-border)",
+          borderRadius: "var(--radius-sm)",
+          opacity: disabled ? 0.6 : 1,
         }}
       >
+        {/* Hidden file input */}
         <input
           ref={inputRef}
           type="file"
@@ -156,75 +319,105 @@ export function FileUpload({
           className="hidden"
         />
 
-        {file ? (
-          <div className="flex items-center gap-3">
-            <svg
-              className="h-8 w-8"
-              style={{ color: "var(--success)" }}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {hasFile ? (
+          /* -----------------------------------------------------------------
+           * SUCCESS STATE
+           * Shows filename with check icon and "Replace File" action
+           * ----------------------------------------------------------------- */
+          <div className="flex w-full items-center gap-3">
+            {/* Success icon box */}
+            <div
+              className="flex h-[40px] shrink-0 items-center p-[10px]"
+              style={{
+                backgroundColor: "var(--upload-success-icon-bg)",
+                borderRadius: "var(--radius-sm)",
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div>
-              <p
-                className="text-sm font-medium"
-                style={{ color: "var(--foreground)" }}
-              >
-                {file.name}
-              </p>
-              {!disabled && (
-                <button
-                  onClick={handleRemove}
-                  className="text-sm underline"
-                  style={{ color: "var(--muted)" }}
-                >
-                  Remove
-                </button>
-              )}
+              <CheckCircleIcon className="h-6 w-6 text-white" />
             </div>
+
+            {/* Filename */}
+            <p
+              className="flex-1 text-[18px]"
+              style={{
+                color: "var(--upload-success-text)",
+                letterSpacing: "-0.36px",
+              }}
+            >
+              {file.name}
+            </p>
+
+            {/* Replace File action */}
+            {!disabled && (
+              <button
+                onClick={handleReplace}
+                className="text-[12px] underline transition-opacity hover:opacity-80"
+                style={{
+                  color: "var(--upload-success-text)",
+                  letterSpacing: "-0.24px",
+                }}
+              >
+                Replace File
+              </button>
+            )}
           </div>
         ) : (
-          <>
-            <svg
-              className="mb-2 h-8 w-8"
-              style={{ color: "var(--muted)" }}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          /* -----------------------------------------------------------------
+           * EMPTY STATE
+           * Shows upload prompt with icon
+           * ----------------------------------------------------------------- */
+          <div className="flex w-full items-center gap-3">
+            {/* Upload icon box */}
+            <div
+              className="flex h-[40px] shrink-0 items-center p-[10px]"
+              style={{
+                backgroundColor: "var(--upload-icon-bg)",
+                borderRadius: "var(--radius-sm)",
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>
-              {isDragging ? "Drop file here" : "Drag & drop or click to browse"}
+              <FileUploadIcon className="h-6 w-6 text-white" />
+            </div>
+
+            {/* Upload prompt */}
+            <p
+              className="text-[18px]"
+              style={{
+                color: "var(--upload-text)",
+                letterSpacing: "-0.36px",
+              }}
+            >
+              {prompt.prefix}
+              {prompt.emphasis}
+              {" here or "}
+              <span
+                className="font-semibold underline"
+                style={{ color: "var(--accent-magenta)" }}
+              >
+                click to upload your file
+              </span>
             </p>
-            <p className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
-              CSV or XLSX
-            </p>
-          </>
+          </div>
         )}
       </div>
 
-      {error && (
-        <p className="mt-2 text-sm" style={{ color: "var(--destructive)" }}>
-          {error}
-        </p>
-      )}
+      {/* Helper text */}
+      <p
+        className="mt-[11px] text-[16px]"
+        style={{
+          color: "var(--muted-light)",
+          letterSpacing: "-0.64px",
+        }}
+      >
+        {HELPER_TEXT}
+      </p>
 
-      {isSameFile && label === "Suppression List" && (
-        <p className="mt-2 text-sm" style={{ color: "var(--warning)" }}>
-          The Contact List and Suppression List must be different files.
+      {/* Error message (validation error) */}
+      {error && (
+        <p
+          className="mt-2 text-body"
+          style={{ color: "var(--destructive)" }}
+        >
+          {error}
         </p>
       )}
     </div>

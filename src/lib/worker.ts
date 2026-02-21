@@ -1,11 +1,34 @@
-// Web Worker for file processing
-// This runs processing off the main thread to keep UI responsive
+/**
+ * =============================================================================
+ * WEB WORKER - FILE PROCESSING
+ * =============================================================================
+ *
+ * Runs file processing off the main thread to keep UI responsive.
+ * Handles CSV/XLSX parsing, email matching, and output generation.
+ *
+ * PROCESS FLOW:
+ * 1. Validate files are different
+ * 2. Parse contact list and suppression list
+ * 3. Match emails and identify removals
+ * 4. Generate cleaned list CSV
+ * 5. Generate audit report CSV (if enabled)
+ * 6. Package outputs as ZIP and individual blobs
+ *
+ * =============================================================================
+ */
 
 import { parseFile, rowsToCSV } from "./parser";
 import { matchAndClean } from "./matcher";
 import { generateAuditReport } from "./audit";
 import { createZip } from "./zip";
 
+/* -----------------------------------------------------------------------------
+ * TYPE DEFINITIONS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Input data passed to the worker
+ */
 export interface WorkerInput {
   contactBuffer: ArrayBuffer;
   contactFileName: string;
@@ -17,26 +40,51 @@ export interface WorkerInput {
   };
 }
 
+/**
+ * Successful processing result
+ * Includes both ZIP bundle and individual file blobs for separate downloads
+ */
 export interface WorkerOutput {
   success: true;
+  /** Combined ZIP file with all outputs */
   zipBlob: Blob;
+  /** Individual blob for cleaned email list (for separate download) */
+  cleanedListBlob: Blob;
+  /** Individual blob for audit report - removed emails (for separate download) */
+  auditReportBlob: Blob | null;
+  /** Processing statistics */
   stats: {
     totalRows: number;
     cleanedCount: number;
     suppressedCount: number;
     invalidCount: number;
   };
+  /** Flags for multiple sheet warnings */
   contactListHasMultipleSheets: boolean;
   suppressionListHasMultipleSheets: boolean;
 }
 
+/**
+ * Processing error result
+ */
 export interface WorkerError {
   success: false;
   error: string;
 }
 
+/**
+ * Union type for all possible worker results
+ */
 export type WorkerResult = WorkerOutput | WorkerError;
 
+/* -----------------------------------------------------------------------------
+ * HELPER FUNCTIONS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Detect if two buffers contain identical data
+ * Used to prevent uploading the same file as both contact and suppression list
+ */
 function detectSameFile(
   contactBuffer: ArrayBuffer,
   suppressionBuffer: ArrayBuffer
@@ -57,6 +105,21 @@ function detectSameFile(
   return true;
 }
 
+/**
+ * Convert CSV string to Blob for download
+ */
+function csvToBlob(csv: string): Blob {
+  return new Blob([csv], { type: "text/csv;charset=utf-8" });
+}
+
+/* -----------------------------------------------------------------------------
+ * MAIN PROCESSING FUNCTION
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Main worker processing function
+ * Performs all file processing and returns results
+ */
 async function processInWorker(input: WorkerInput): Promise<WorkerResult> {
   const {
     contactBuffer,
@@ -66,7 +129,9 @@ async function processInWorker(input: WorkerInput): Promise<WorkerResult> {
     options,
   } = input;
 
-  // Check for same file upload
+  // -------------------------------------------------------------------------
+  // VALIDATION: Check for same file upload
+  // -------------------------------------------------------------------------
   if (detectSameFile(contactBuffer, suppressionBuffer)) {
     return {
       success: false,
@@ -75,7 +140,9 @@ async function processInWorker(input: WorkerInput): Promise<WorkerResult> {
     };
   }
 
-  // Parse contact list
+  // -------------------------------------------------------------------------
+  // PARSING: Parse contact list
+  // -------------------------------------------------------------------------
   const contactResult = parseFile(contactBuffer, contactFileName);
   if (!contactResult.success) {
     return {
@@ -84,7 +151,9 @@ async function processInWorker(input: WorkerInput): Promise<WorkerResult> {
     };
   }
 
-  // Parse suppression list
+  // -------------------------------------------------------------------------
+  // PARSING: Parse suppression list
+  // -------------------------------------------------------------------------
   const suppressionResult = parseFile(suppressionBuffer, suppressionFileName);
   if (!suppressionResult.success) {
     return {
@@ -93,41 +162,65 @@ async function processInWorker(input: WorkerInput): Promise<WorkerResult> {
     };
   }
 
-  // Perform matching
+  // -------------------------------------------------------------------------
+  // MATCHING: Perform email matching and cleaning
+  // -------------------------------------------------------------------------
   const matchResult = matchAndClean(
     contactResult.data,
     suppressionResult.data,
     { removeInvalidEmails: options.removeInvalidEmails }
   );
 
-  // Generate output CSV
+  // -------------------------------------------------------------------------
+  // OUTPUT: Generate cleaned list CSV
+  // -------------------------------------------------------------------------
   const cleanedCSV = rowsToCSV(
     contactResult.data.headers,
     matchResult.cleanedRows
   );
+  const cleanedListBlob = csvToBlob(cleanedCSV);
 
-  // Generate audit report if requested
+  // -------------------------------------------------------------------------
+  // OUTPUT: Generate audit report CSV (if enabled and there are removals)
+  // -------------------------------------------------------------------------
   let auditCSV: string | undefined;
+  let auditReportBlob: Blob | null = null;
+
   if (options.generateAuditReport && matchResult.removedRows.length > 0) {
     auditCSV = generateAuditReport(matchResult.removedRows);
+    auditReportBlob = csvToBlob(auditCSV);
   }
 
-  // Create ZIP
+  // -------------------------------------------------------------------------
+  // OUTPUT: Create ZIP bundle with all files
+  // -------------------------------------------------------------------------
   const zipBlob = await createZip({
     cleanedListCSV: cleanedCSV,
     auditReportCSV: auditCSV,
   });
 
+  // -------------------------------------------------------------------------
+  // RETURN: Success result with all outputs
+  // -------------------------------------------------------------------------
   return {
     success: true,
     zipBlob,
+    cleanedListBlob,
+    auditReportBlob,
     stats: matchResult.stats,
     contactListHasMultipleSheets: contactResult.data.hasMultipleSheets,
     suppressionListHasMultipleSheets: suppressionResult.data.hasMultipleSheets,
   };
 }
 
-// Worker message handler
+/* -----------------------------------------------------------------------------
+ * WORKER MESSAGE HANDLER
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Handle incoming messages from main thread
+ * Processes the input and posts result back
+ */
 self.onmessage = async (event: MessageEvent<WorkerInput>) => {
   const result = await processInWorker(event.data);
   self.postMessage(result);

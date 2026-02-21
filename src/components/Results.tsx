@@ -103,6 +103,28 @@ function ArrowDownIcon({
 }
 
 /**
+ * Check circle icon for warning/info states (multiple sheets banner)
+ */
+function CheckCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+      <polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  );
+}
+
+/**
  * Alert circle icon for error states
  */
 function AlertCircleIcon({ className }: { className?: string }) {
@@ -362,21 +384,42 @@ export function Results({
       {/* -----------------------------------------------------------------------
        * MULTIPLE SHEETS WARNING
        * Shown if either file had multiple sheets (only first was used)
+       * Amber-themed info banner matching Figma design
        * ----------------------------------------------------------------------- */}
       {(result.contactListHasMultipleSheets ||
         result.suppressionListHasMultipleSheets) && (
-        <p
-          className="text-body"
-          style={{ color: "var(--muted)" }}
+        <div
+          className="flex items-center gap-[10px] rounded border px-6 py-3"
+          style={{
+            backgroundColor: "var(--warning-bg)",
+            borderColor: "var(--warning-border)",
+            borderRadius: "var(--radius-sm)",
+          }}
         >
-          Note: First sheet was used.
-          {result.contactListHasMultipleSheets &&
-          result.suppressionListHasMultipleSheets
-            ? " Both files had multiple sheets."
-            : result.contactListHasMultipleSheets
-              ? " Contact List had multiple sheets."
-              : " Suppression List had multiple sheets."}
-        </p>
+          {/* Warning icon */}
+          <div
+            className="flex h-[31px] w-[34px] shrink-0 items-center justify-center rounded"
+            style={{
+              backgroundColor: "var(--warning-icon-bg)",
+              borderRadius: "var(--radius-sm)",
+            }}
+          >
+            <CheckCircleIcon className="h-[18px] w-[18px] text-white" />
+          </div>
+          {/* Warning message */}
+          <p
+            className="text-body"
+            style={{ color: "var(--warning-text)" }}
+          >
+            First sheet was used.
+            {result.contactListHasMultipleSheets &&
+            result.suppressionListHasMultipleSheets
+              ? " Both files had multiple sheets."
+              : result.contactListHasMultipleSheets
+                ? " Contact List had multiple sheets."
+                : " Suppression List had multiple sheets."}
+          </p>
+        </div>
       )}
     </div>
   );

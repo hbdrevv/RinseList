@@ -92,6 +92,13 @@
   --stone-50: #fafaf9;
 
   /* -------------------------------------------------------------------------
+   * AMBER SCALE - Warning states
+   * Used for: info/warning banners (e.g., multiple sheets note)
+   * ------------------------------------------------------------------------- */
+  --amber-50: #fffbeb;
+  --amber-600: #e17100;
+
+  /* -------------------------------------------------------------------------
    * ACCENT COLORS
    * ------------------------------------------------------------------------- */
   --accent-magenta: #ed6aff;    /* Upload zone "click to upload" link color */
@@ -129,6 +136,12 @@
   --modal-bg: var(--blue-50);
   --modal-border: var(--blue-200);
   --modal-text: var(--blue-600);
+
+  /* Warning banner (multiple sheets note) */
+  --warning-bg: var(--amber-50);
+  --warning-border: var(--amber-600);
+  --warning-text: var(--amber-600);
+  --warning-icon-bg: var(--amber-600);
 
   /* -------------------------------------------------------------------------
    * SPACING & RADIUS TOKENS

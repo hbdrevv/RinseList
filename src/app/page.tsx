@@ -28,6 +28,41 @@ import { HowItWorksPanel } from "@/components/HowItWorksPanel";
 import { processFiles, ProcessingResult } from "@/lib/processor";
 
 /* -----------------------------------------------------------------------------
+ * ANALYTICS HELPERS
+ * -------------------------------------------------------------------------- */
+
+/**
+ * Track a list processing event
+ * Fire-and-forget - failures are silent to not affect UX
+ */
+function trackListProcessed(
+  result: ProcessingResult,
+  contactFile: File,
+  suppressionFile: File
+) {
+  const getFileType = (filename: string) => {
+    const ext = filename.toLowerCase().split(".").pop();
+    return ext === "xlsx" || ext === "xls" ? "excel" : "csv";
+  };
+
+  fetch("/api/track", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event: "list_processed",
+      totalRows: result.stats.totalRows,
+      cleanedCount: result.stats.cleanedCount,
+      suppressedCount: result.stats.suppressedCount,
+      invalidCount: result.stats.invalidCount,
+      contactFileType: getFileType(contactFile.name),
+      suppressionFileType: getFileType(suppressionFile.name),
+    }),
+  }).catch(() => {
+    // Silent fail - analytics should never break the app
+  });
+}
+
+/* -----------------------------------------------------------------------------
  * TYPE DEFINITIONS
  * -------------------------------------------------------------------------- */
 
@@ -141,6 +176,9 @@ export default function Home() {
       );
       setResult(processingResult);
       setState("results");
+
+      // Track successful processing for analytics
+      trackListProcessed(processingResult, contactList.file, suppressionList.file);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "An unexpected error occurred"

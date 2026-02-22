@@ -121,18 +121,19 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
       {/* -----------------------------------------------------------------------
        * SLIDE-OUT PANEL
        * Fixed to right side, full height
+       * Mobile: Full width
        * ----------------------------------------------------------------------- */}
       <aside
-        className="fixed bottom-0 right-0 top-0 z-50 w-[569px] overflow-y-auto bg-white px-16 pb-16 pt-10"
+        className="fixed bottom-0 right-0 top-0 z-50 w-full overflow-y-auto bg-white px-4 pb-8 pt-6 sm:w-[400px] sm:px-8 sm:pb-12 sm:pt-8 md:w-[569px] md:px-16 md:pb-16 md:pt-10"
         role="dialog"
         aria-modal="true"
         aria-labelledby="how-it-works-title"
       >
         {/* Close button - top right */}
-        <div className="mb-10 flex justify-end">
+        <div className="mb-4 flex justify-end sm:mb-6 md:mb-8">
           <button
             onClick={onClose}
-            className="rounded px-3 py-2 text-label transition-colors hover:opacity-90"
+            className="rounded px-2.5 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 md:px-3 md:py-2 md:text-label"
             style={{
               backgroundColor: "var(--zinc-600)",
               color: "white",
@@ -146,16 +147,16 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
          * HEADER SECTION
          * Title and description
          * ----------------------------------------------------------------------- */}
-        <div className="mb-10">
+        <div className="mb-4 sm:mb-6 md:mb-8">
           <h2
             id="how-it-works-title"
-            className="text-headline mb-4"
+            className="text-headline-responsive mb-4 md:mb-6"
             style={{ color: "var(--foreground)" }}
           >
             How It Works
           </h2>
           <p
-            className="text-body"
+            className="text-sm md:text-body"
             style={{ color: "var(--muted)" }}
           >
             RinseList removes suppressed and invalid emails before you upload
@@ -167,10 +168,10 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
          * CAROUSEL SECTION
          * Visual step-by-step guide with numbered indicators
          * ----------------------------------------------------------------------- */}
-        <div className="mb-10">
+        <div className="mb-4 sm:mb-6 md:mb-8">
           {/* Carousel card - placeholder for visual content */}
           <div
-            className="mb-4 flex h-[400px] flex-col items-start justify-end rounded-2xl p-4"
+            className="mb-4 flex h-[200px] flex-col items-start justify-end rounded-xl p-3 sm:h-[300px] md:mb-6 md:h-[400px] md:rounded-2xl md:p-4"
             style={{ backgroundColor: "var(--surface)" }}
           >
             {/* Step indicators */}
@@ -178,7 +179,7 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
               {CAROUSEL_STEPS.map((step) => (
                 <div
                   key={step.number}
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-label"
+                  className="flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold md:h-6 md:w-6 md:text-label"
                   style={{
                     backgroundColor: step.isActive
                       ? "var(--blue-200)"
@@ -194,7 +195,7 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
 
           {/* Current step description */}
           <p
-            className="text-[18px] font-semibold leading-snug"
+            className="text-sm font-semibold leading-snug sm:text-base md:text-[18px]"
             style={{ color: "var(--muted)", letterSpacing: "-0.72px" }}
           >
             {CAROUSEL_STEPS.find((s) => s.isActive)?.description}
@@ -206,15 +207,15 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
          * Information about supported file types
          * TODO: Update content from Figma when available
          * ----------------------------------------------------------------------- */}
-        <div className="mb-10">
+        <div className="mb-4 sm:mb-6 md:mb-8">
           <h3
-            className="text-title mb-4"
+            className="mb-4 text-base font-semibold md:mb-6 md:text-title"
             style={{ color: "var(--foreground)" }}
           >
             File Support
           </h3>
           <p
-            className="text-body"
+            className="text-sm md:text-body"
             style={{ color: "var(--muted)" }}
           >
             {FILE_SUPPORT_CONTENT}
@@ -228,13 +229,13 @@ export function HowItWorksPanel({ onClose }: HowItWorksPanelProps) {
          * ----------------------------------------------------------------------- */}
         <div>
           <h3
-            className="text-title mb-4"
+            className="mb-4 text-base font-semibold md:mb-6 md:text-title"
             style={{ color: "var(--foreground)" }}
           >
             FAQs
           </h3>
           <p
-            className="text-body"
+            className="text-sm md:text-body"
             style={{ color: "var(--muted)" }}
           >
             {FAQS_CONTENT}

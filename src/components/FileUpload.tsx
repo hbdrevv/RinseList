@@ -289,8 +289,8 @@ export function FileUpload({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         className={`
-          relative flex h-[89px] cursor-pointer items-center
-          border px-6 transition-all
+          relative flex h-[60px] cursor-pointer items-center
+          border px-3 transition-all sm:h-[75px] sm:px-4 md:h-[89px] md:px-6
           ${disabled ? "cursor-not-allowed" : ""}
           ${hasFile ? "border-solid" : "border-dashed"}
         `}
@@ -324,21 +324,21 @@ export function FileUpload({
            * SUCCESS STATE
            * Shows filename with check icon and "Replace File" action
            * ----------------------------------------------------------------- */
-          <div className="flex w-full items-center gap-3">
+          <div className="flex w-full items-center gap-2 md:gap-3">
             {/* Success icon box */}
             <div
-              className="flex h-[40px] shrink-0 items-center p-[10px]"
+              className="flex h-[28px] shrink-0 items-center p-[6px] sm:h-[34px] sm:p-[8px] md:h-[40px] md:p-[10px]"
               style={{
                 backgroundColor: "var(--upload-success-icon-bg)",
                 borderRadius: "var(--radius-sm)",
               }}
             >
-              <CheckCircleIcon className="h-6 w-6 text-white" />
+              <CheckCircleIcon className="h-4 w-4 text-white sm:h-5 sm:w-5 md:h-6 md:w-6" />
             </div>
 
             {/* Filename */}
             <p
-              className="flex-1 text-[18px]"
+              className="flex-1 truncate text-[12px] sm:text-[14px] md:text-[18px]"
               style={{
                 color: "var(--upload-success-text)",
                 letterSpacing: "-0.36px",
@@ -351,13 +351,13 @@ export function FileUpload({
             {!disabled && (
               <button
                 onClick={handleReplace}
-                className="text-[12px] underline transition-opacity hover:opacity-80"
+                className="shrink-0 text-[10px] underline transition-opacity hover:opacity-80 md:text-[12px]"
                 style={{
                   color: "var(--upload-success-text)",
                   letterSpacing: "-0.24px",
                 }}
               >
-                Replace File
+                Replace
               </button>
             )}
           </div>
@@ -366,34 +366,34 @@ export function FileUpload({
            * EMPTY STATE
            * Shows upload prompt with icon
            * ----------------------------------------------------------------- */
-          <div className="flex w-full items-center gap-3">
+          <div className="flex w-full items-center gap-2 md:gap-3">
             {/* Upload icon box */}
             <div
-              className="flex h-[40px] shrink-0 items-center p-[10px]"
+              className="flex h-[28px] shrink-0 items-center p-[6px] sm:h-[34px] sm:p-[8px] md:h-[40px] md:p-[10px]"
               style={{
                 backgroundColor: "var(--upload-icon-bg)",
                 borderRadius: "var(--radius-sm)",
               }}
             >
-              <FileUploadIcon className="h-6 w-6 text-white" />
+              <FileUploadIcon className="h-4 w-4 text-white sm:h-5 sm:w-5 md:h-6 md:w-6" />
             </div>
 
             {/* Upload prompt */}
             <p
-              className="text-[18px]"
+              className="text-[11px] leading-tight sm:text-[14px] md:text-[18px]"
               style={{
                 color: "var(--upload-text)",
                 letterSpacing: "-0.36px",
               }}
             >
-              {prompt.prefix}
-              {prompt.emphasis}
-              {" here or "}
+              <span className="hidden sm:inline">{prompt.prefix}{prompt.emphasis} here or </span>
+              <span className="sm:hidden">Drop {prompt.emphasis} or </span>
               <span
                 className="font-semibold underline"
                 style={{ color: "var(--accent-magenta)" }}
               >
-                click to upload your file
+                <span className="hidden sm:inline">click to upload your file</span>
+                <span className="sm:hidden">tap to upload</span>
               </span>
             </p>
           </div>
@@ -402,7 +402,7 @@ export function FileUpload({
 
       {/* Helper text */}
       <p
-        className="mt-[11px] text-[16px]"
+        className="mt-[8px] text-[10px] sm:text-[12px] md:mt-[11px] md:text-[16px]"
         style={{
           color: "var(--muted-light)",
           letterSpacing: "-0.64px",
@@ -414,7 +414,7 @@ export function FileUpload({
       {/* Error message (validation error) */}
       {error && (
         <p
-          className="mt-2 text-body"
+          className="mt-2 text-xs md:text-body"
           style={{ color: "var(--destructive)" }}
         >
           {error}

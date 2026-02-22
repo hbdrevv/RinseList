@@ -199,10 +199,10 @@ export function Results({
    * ------------------------------------------------------------------------- */
   if (error) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4 md:gap-8">
         {/* Error headline */}
         <h2
-          className="text-display"
+          className="text-display-responsive"
           style={{ color: "var(--destructive)" }}
         >
           Oops! Something didn&apos;t work.
@@ -210,7 +210,7 @@ export function Results({
 
         {/* Error banner with specific message */}
         <div
-          className="flex items-center gap-3 rounded border px-6 py-3"
+          className="flex items-center gap-2 rounded border px-3 py-2 sm:gap-2.5 sm:px-4 sm:py-2.5 md:gap-3 md:px-6 md:py-3"
           style={{
             backgroundColor: "var(--error-bg)",
             borderColor: "var(--error-border)",
@@ -218,14 +218,14 @@ export function Results({
         >
           {/* Error icon */}
           <div
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded md:h-8 md:w-8"
             style={{ backgroundColor: "var(--error-icon-bg)" }}
           >
-            <AlertCircleIcon className="h-5 w-5 text-white" />
+            <AlertCircleIcon className="h-4 w-4 text-white md:h-5 md:w-5" />
           </div>
           {/* Error message */}
           <p
-            className="text-body"
+            className="text-xs md:text-body"
             style={{ color: "var(--error-text)" }}
           >
             {error}
@@ -233,9 +233,9 @@ export function Results({
         </div>
 
         {/* Helper text with troubleshooting tips */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 md:space-y-8">
           <p
-            className="text-body whitespace-pre-line"
+            className="whitespace-pre-line text-xs md:text-body"
             style={{ color: "var(--muted)" }}
           >
             {ERROR_HELPER_TEXT}
@@ -244,14 +244,14 @@ export function Results({
           {/* Try Again button */}
           <button
             onClick={onTryAgain}
-            className="flex items-center gap-2 rounded px-3.5 py-3 text-label transition-colors hover:opacity-90"
+            className="flex items-center gap-1.5 rounded px-2.5 py-2 text-sm font-semibold transition-colors hover:opacity-90 md:gap-2 md:px-3.5 md:py-3 md:text-label"
             style={{
               backgroundColor: "var(--primary)",
               color: "var(--primary-foreground)",
             }}
           >
             <span>Try Again</span>
-            <UndoIcon className="h-6 w-6" />
+            <UndoIcon className="h-5 w-5 md:h-6 md:w-6" />
           </button>
         </div>
       </div>
@@ -277,10 +277,10 @@ export function Results({
     : "cleaned_list.csv";
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 md:gap-8">
       {/* Success headline */}
       <h2
-        className="text-display"
+        className="text-display-responsive"
         style={{ color: "var(--primary)" }}
       >
         Your files are ready to use!
@@ -291,7 +291,7 @@ export function Results({
        * Two clickable cards showing processing results
        * Each card can download its respective file
        * ----------------------------------------------------------------------- */}
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* -----------------------------------------------------------------
          * REMOVED EMAILS CARD (Blue)
          * Shows count of emails removed with breakdown
@@ -299,29 +299,29 @@ export function Results({
          * ----------------------------------------------------------------- */}
         <button
           onClick={onDownloadAuditReport}
-          className="w-full rounded-xl p-5 text-left transition-opacity hover:opacity-90"
+          className="w-full rounded-lg p-3 text-left transition-opacity hover:opacity-90 sm:p-4 md:rounded-xl md:p-5"
           style={{ backgroundColor: "var(--results-removed-bg)" }}
           title="Download removed emails report"
         >
           {/* Main stat */}
           <p
-            className="text-display mb-3"
+            className="mb-2 text-2xl font-semibold md:mb-3 md:text-display"
             style={{ color: "var(--results-removed-text)" }}
           >
             {totalRemoved.toLocaleString()} rows cleaned
           </p>
 
           {/* Breakdown and download indicator */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <div
-              className="flex items-center gap-3 text-title"
+              className="flex flex-col gap-1 text-xs font-semibold sm:flex-row sm:items-center sm:gap-3 md:text-title"
               style={{ color: "var(--results-removed-text)" }}
             >
-              <span>{stats.suppressedCount.toLocaleString()} Suppressed Emails</span>
-              <span>{stats.invalidCount.toLocaleString()} Invalid Emails</span>
+              <span>{stats.suppressedCount.toLocaleString()} Suppressed</span>
+              <span>{stats.invalidCount.toLocaleString()} Invalid</span>
             </div>
             <ArrowDownIcon
-              className="h-6 w-6"
+              className="h-5 w-5 shrink-0 md:h-6 md:w-6"
               style={{ color: "var(--results-removed-text)" }}
             />
           </div>
@@ -334,29 +334,29 @@ export function Results({
          * ----------------------------------------------------------------- */}
         <button
           onClick={onDownloadCleanedList}
-          className="w-full rounded-xl p-5 text-left transition-opacity hover:opacity-90"
+          className="w-full rounded-lg p-3 text-left transition-opacity hover:opacity-90 sm:p-4 md:rounded-xl md:p-5"
           style={{ backgroundColor: "var(--results-clean-bg)" }}
           title="Download cleaned email list"
         >
           {/* Main stat */}
           <p
-            className="text-display mb-3"
+            className="mb-2 text-2xl font-semibold md:mb-3 md:text-display"
             style={{ color: "var(--results-clean-text)" }}
           >
             {stats.cleanedCount.toLocaleString()}
           </p>
 
           {/* Filename and download indicator */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <p
-              className="text-title"
+              className="truncate text-xs font-semibold md:text-title"
               style={{ color: "var(--results-clean-text)" }}
             >
-              Emails are in{" "}
+              <span className="hidden sm:inline">Emails are in </span>
               <span className="underline">{outputFilename}</span>
             </p>
             <ArrowDownIcon
-              className="h-6 w-6"
+              className="h-5 w-5 shrink-0 md:h-6 md:w-6"
               style={{ color: "var(--results-clean-text)" }}
             />
           </div>
@@ -370,14 +370,14 @@ export function Results({
       <div className="flex justify-end">
         <button
           onClick={onDownload}
-          className="flex items-center gap-2 rounded px-3.5 py-3 text-label transition-colors hover:opacity-90"
+          className="flex items-center gap-1.5 rounded px-2.5 py-2 text-sm font-semibold transition-colors hover:opacity-90 md:gap-2 md:px-3.5 md:py-3 md:text-label"
           style={{
             backgroundColor: "var(--primary)",
             color: "var(--primary-foreground)",
           }}
         >
           <span>Download Results</span>
-          <DownloadIcon className="h-6 w-6" />
+          <DownloadIcon className="h-5 w-5 md:h-6 md:w-6" />
         </button>
       </div>
 
@@ -389,7 +389,7 @@ export function Results({
       {(result.contactListHasMultipleSheets ||
         result.suppressionListHasMultipleSheets) && (
         <div
-          className="flex items-center gap-[10px] rounded border px-6 py-3"
+          className="flex items-center gap-2 rounded border px-3 py-2 sm:gap-2.5 sm:px-4 sm:py-2.5 md:gap-3 md:px-6 md:py-3"
           style={{
             backgroundColor: "var(--warning-bg)",
             borderColor: "var(--warning-border)",
@@ -398,17 +398,17 @@ export function Results({
         >
           {/* Warning icon */}
           <div
-            className="flex h-[31px] w-[34px] shrink-0 items-center justify-center rounded"
+            className="flex h-[24px] w-[26px] shrink-0 items-center justify-center rounded md:h-[31px] md:w-[34px]"
             style={{
               backgroundColor: "var(--warning-icon-bg)",
               borderRadius: "var(--radius-sm)",
             }}
           >
-            <CheckCircleIcon className="h-[18px] w-[18px] text-white" />
+            <CheckCircleIcon className="h-[14px] w-[14px] text-white md:h-[18px] md:w-[18px]" />
           </div>
           {/* Warning message */}
           <p
-            className="text-body"
+            className="text-xs md:text-body"
             style={{ color: "var(--warning-text)" }}
           >
             First sheet was used.

@@ -249,3 +249,49 @@ body {
   line-height: 1.02;
   letter-spacing: -0.32px;
 }
+
+/* Responsive text styles for mobile/tablet */
+.text-display-responsive {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -1.28px;
+}
+
+.text-headline-responsive {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -1.12px;
+}
+
+.text-title-responsive {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.64px;
+}
+
+@media (min-width: 768px) {
+  .text-display-responsive {
+    font-size: 48px;
+    letter-spacing: -1.92px;
+  }
+
+  .text-headline-responsive {
+    font-size: 40px;
+    letter-spacing: -1.6px;
+  }
+
+  .text-title-responsive {
+    font-size: 20px;
+    letter-spacing: -0.8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-display-responsive {
+    font-size: 60px;
+    letter-spacing: -2.4px;
+  }
+}

@@ -281,10 +281,10 @@ export default function Home() {
        * HEADER
        * Logo on left, "Clean Another List" button on right (results state only)
        * ----------------------------------------------------------------------- */}
-      <header className="flex items-center justify-between px-8 py-5">
+      <header className="flex items-center justify-between px-4 py-4 md:px-8 md:py-5">
         {/* Logo */}
         <h1
-          className="text-[40px] font-black tracking-tight"
+          className="text-[32px] font-black tracking-tight md:text-[40px]"
           style={{ color: "var(--primary)", letterSpacing: "-1.6px" }}
         >
           RinseList
@@ -294,11 +294,12 @@ export default function Home() {
         {isProcessingOrResults && (
           <button
             onClick={handleResetClick}
-            className="flex items-center gap-2 rounded px-3 py-2 text-label transition-colors hover:opacity-80"
+            className="flex items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors hover:opacity-80 md:px-3 md:py-2 md:text-label"
             style={{ color: "var(--primary)" }}
           >
-            <UndoIcon className="h-6 w-6" />
-            <span>Clean Another List</span>
+            <UndoIcon className="h-5 w-5 md:h-6 md:w-6" />
+            <span className="hidden sm:inline">Clean Another List</span>
+            <span className="sm:hidden">Reset</span>
           </button>
         )}
       </header>
@@ -308,9 +309,10 @@ export default function Home() {
        * Layout changes based on state:
        * - Upload: Hero (left) + Input Surface (right)
        * - Loading/Results: Input Surface (left) + Results (right)
+       * Mobile: Stacked vertically
        * ----------------------------------------------------------------------- */}
-      <div className="px-8">
-        <div className="flex gap-8">
+      <div className="px-4 md:px-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
           {/* -----------------------------------------------------------------
            * LEFT COLUMN
            * Upload state: Hero section with tagline
@@ -319,11 +321,11 @@ export default function Home() {
           <div className="flex-1">
             {state === "upload" ? (
               /* HERO SECTION - Shown during upload state */
-              <div className="flex h-full flex-col justify-center py-16">
-                <div className="max-w-[441px]">
+              <div className="flex h-full flex-col items-center justify-center py-8 text-center lg:items-start lg:py-16 lg:text-left">
+                <div className="max-w-[350px] lg:max-w-[441px]">
                   {/* Main tagline */}
                   <h2
-                    className="text-headline mb-6"
+                    className="text-headline-responsive mb-4 lg:mb-6"
                     style={{ color: "var(--foreground)" }}
                   >
                     Safely clean your new email list with ease
@@ -331,7 +333,7 @@ export default function Home() {
 
                   {/* Privacy assurance */}
                   <p
-                    className="text-body-bold mb-6"
+                    className="mb-4 text-sm font-bold leading-snug lg:mb-6 lg:text-body-bold"
                     style={{ color: "var(--muted)" }}
                   >
                     We never store or access your customer data. All processing
@@ -341,7 +343,7 @@ export default function Home() {
                   {/* How it Works button */}
                   <button
                     onClick={() => setShowHowItWorks(true)}
-                    className="rounded px-3 py-2 text-label transition-colors hover:opacity-90"
+                    className="rounded px-3 py-2 text-sm font-semibold transition-colors hover:opacity-90 lg:text-label"
                     style={{
                       backgroundColor: "var(--zinc-600)",
                       color: "white",
@@ -386,10 +388,10 @@ export default function Home() {
               />
             ) : (
               /* RESULTS PANEL - Shown during loading/results state */
-              <div className="py-6">
+              <div className="py-4 md:py-6">
                 {state === "loading" ? (
                   /* Loading state - minimal indicator since panel animates */
-                  <div className="flex h-[537px] flex-col items-center justify-center">
+                  <div className="flex h-[300px] flex-col items-center justify-center md:h-[537px]">
                     <div
                       className="h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"
                       style={{
@@ -397,7 +399,7 @@ export default function Home() {
                         borderTopColor: "transparent",
                       }}
                     />
-                    <p className="mt-4 text-body" style={{ color: "var(--muted)" }}>
+                    <p className="mt-4 text-sm md:text-body" style={{ color: "var(--muted)" }}>
                       Processing your files...
                     </p>
                   </div>
@@ -488,7 +490,7 @@ function InputSurface({
 
   return (
     <div
-      className={`rounded-xl border px-14 py-16 transition-opacity ${
+      className={`rounded-xl border px-5 py-6 transition-opacity sm:px-8 sm:py-10 md:px-14 md:py-16 ${
         disabled ? "opacity-50" : ""
       }`}
       style={{
@@ -498,14 +500,14 @@ function InputSurface({
     >
       {/* Section title */}
       <h2
-        className="text-title mb-6"
+        className="mb-4 text-base font-semibold md:mb-6 md:text-title"
         style={{ color: "var(--foreground)" }}
       >
         Add Your Files
       </h2>
 
       {/* File upload zones */}
-      <div className="space-y-10">
+      <div className="space-y-4 sm:space-y-6 md:space-y-8">
         {/* Contact List upload */}
         <FileUpload
           type="contact"
@@ -526,7 +528,7 @@ function InputSurface({
       {/* Error message for same file */}
       {isSameFile && (
         <div
-          className="mt-6 flex items-center gap-3 rounded border px-6 py-3"
+          className="mt-4 flex items-center gap-2 rounded border px-3 py-2 sm:mt-5 sm:gap-2.5 sm:px-4 sm:py-2.5 md:mt-6 md:gap-3 md:px-6 md:py-3"
           style={{
             backgroundColor: "var(--error-bg)",
             borderColor: "var(--error-border)",
@@ -534,11 +536,11 @@ function InputSurface({
         >
           {/* Error icon */}
           <div
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded md:h-8 md:w-8"
             style={{ backgroundColor: "var(--error-icon-bg)" }}
           >
             <svg
-              className="h-5 w-5 text-white"
+              className="h-4 w-4 text-white md:h-5 md:w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -549,18 +551,18 @@ function InputSurface({
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
           </div>
-          <p className="text-body" style={{ color: "var(--error-text)" }}>
+          <p className="text-xs md:text-body" style={{ color: "var(--error-text)" }}>
             The Contact List and Suppression List must be different files.
           </p>
         </div>
       )}
 
       {/* Process button */}
-      <div className="mt-10 flex justify-end">
+      <div className="mt-4 flex justify-end sm:mt-6 md:mt-8">
         <button
           onClick={onProcess}
           disabled={!canProcess || disabled || !!isSameFile || isLoading}
-          className="flex items-center gap-2 rounded px-3.5 py-3 text-label transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded px-2.5 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 md:gap-2 md:px-3.5 md:py-3 md:text-label"
           style={{
             backgroundColor: "var(--primary)",
             color: "var(--primary-foreground)",
@@ -569,7 +571,7 @@ function InputSurface({
           <span>Clean Your List</span>
           {/* Arrow right icon */}
           <svg
-            className="h-6 w-6"
+            className="h-5 w-5 md:h-6 md:w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

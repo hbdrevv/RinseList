@@ -31,8 +31,19 @@ import { processFiles, ProcessingResult } from "@/lib/processor";
  * ANALYTICS HELPERS
  * -------------------------------------------------------------------------- */
 
+// Declare gtag as a global function (injected by Google Analytics script)
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      action: string,
+      params?: Record<string, unknown>
+    ) => void;
+  }
+}
+
 /**
- * Track a list processing event
+ * Track a list processing event via Google Analytics
  * Fire-and-forget - failures are silent to not affect UX
  */
 function trackListProcessed(
@@ -45,21 +56,17 @@ function trackListProcessed(
     return ext === "xlsx" || ext === "xls" ? "excel" : "csv";
   };
 
-  fetch("/api/track", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      event: "list_processed",
-      totalRows: result.stats.totalRows,
-      cleanedCount: result.stats.cleanedCount,
-      suppressedCount: result.stats.suppressedCount,
-      invalidCount: result.stats.invalidCount,
-      contactFileType: getFileType(contactFile.name),
-      suppressionFileType: getFileType(suppressionFile.name),
-    }),
-  }).catch(() => {
-    // Silent fail - analytics should never break the app
-  });
+  // Send event to Google Analytics
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", "list_processed", {
+      total_rows: result.stats.totalRows,
+      cleaned_count: result.stats.cleanedCount,
+      suppressed_count: result.stats.suppressedCount,
+      invalid_count: result.stats.invalidCount,
+      contact_file_type: getFileType(contactFile.name),
+      suppression_file_type: getFileType(suppressionFile.name),
+    });
+  }
 }
 
 /* -----------------------------------------------------------------------------

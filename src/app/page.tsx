@@ -328,7 +328,7 @@ export default function Home() {
                     className="text-headline-responsive mb-4 lg:mb-6"
                     style={{ color: "var(--foreground)" }}
                   >
-                    Safely clean your new email list with ease
+                    Instantly clean your email list in your browser without sharing customer data
                   </h2>
 
                   {/* Privacy assurance */}

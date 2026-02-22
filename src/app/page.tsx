@@ -340,7 +340,7 @@ export default function Home() {
                   </p>
 
                   {/* How it Works button */}
-                  <button
+                  {/*<button
                     onClick={() => setShowHowItWorks(true)}
                     className="rounded px-3 py-2 text-sm font-semibold transition-colors hover:opacity-90 lg:text-label"
                     style={{
@@ -349,7 +349,7 @@ export default function Home() {
                     }}
                   >
                     How it Works
-                  </button>
+                  </button>*/}
                 </div>
               </div>
             ) : (

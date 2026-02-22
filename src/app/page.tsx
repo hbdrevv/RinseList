@@ -322,7 +322,7 @@ export default function Home() {
             {state === "upload" ? (
               /* HERO SECTION - Shown during upload state */
               <div className="flex h-full flex-col items-center justify-center py-8 text-center lg:items-start lg:py-16 lg:text-left">
-                <div className="max-w-[350px] lg:max-w-[441px]">
+                <div className="max-w-[500px] lg:max-w-[441px]">
                   {/* Main tagline */}
                   <h2
                     className="text-headline-responsive mb-4 lg:mb-6"

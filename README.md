@@ -1,10 +1,10 @@
 # RinseList
 
-Clean your email list before it hits Klaviyo.
+Clean your email list before it hits Klaviyo or another ESP.
 
 RinseList removes suppressed contacts and invalid email addresses from a contact list — entirely in the browser. No data is sent to a server. No files are stored. Upload, rinse, download.
 
-**[rinselist.com](https://rinselist.com)** — free to use, donation supported.
+**[rinselist.com](https://rinselist.com)** — free to use.
 
 ---
 
@@ -83,17 +83,13 @@ This is an open utility. If you find a bug or have a suggestion, open an issue. 
 
 ---
 
-## Support
-
-RinseList is free to use. If it saves you time, [buy me a coffee](#).
-
----
-
 ## Roadmap
 
 - [ ] XLSX sheet selector when multiple sheets are detected
+- [ ] Batch file handling with server function to handle volume
 - [ ] Agency whitelabel tier (custom subdomain, logo, brand colors)
-- [ ] Direct Klaviyo API upload
+- [ ] Direct Klaviyo API upload 
+- [ ] Integration with project management tools to create a data-intake pipeline for agencies 
 
 ---
 

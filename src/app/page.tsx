@@ -336,8 +336,7 @@ export default function Home() {
                     className="mb-4 text-sm font-bold leading-snug lg:mb-6 lg:text-body-bold"
                     style={{ color: "var(--muted)" }}
                   >
-                    We never store or access your customer data. All processing
-                    happens locally in your browser.
+                    For email marketers who need to clean contact lists before uploading to their ESP
                   </p>
 
                   {/* How it Works button */}
